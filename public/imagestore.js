@@ -3,6 +3,9 @@
  * localStorage 只留轻量元数据（位置、提示词、尺寸）。
  */
 (() => {
+  // 数据库名沿用 'ai-canvas'（项目曾用名）。
+  // 故意不改：这是浏览器里存放用户图片的位置，改名等于让老用户的图片凭空消失。
+  // 与品牌名无关，请勿随仓库改名而不做迁移。
   const DB_NAME = 'ai-canvas';
   const DB_VER = 1;
   const STORE = 'images';

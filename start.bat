@@ -1,10 +1,10 @@
 @echo off
 setlocal
-title AI Canvas
+title Imagium
 cd /d "%~dp0"
 
 echo.
-echo   AI Canvas
+echo   Imagium
 echo   ----------------------------------------
 echo.
 

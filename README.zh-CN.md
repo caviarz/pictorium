@@ -1,13 +1,15 @@
-# AI Canvas
+# Imagium
 
-**跑在无限画布上的 OpenAI 兼容图片生成工作台。**
+**无限画布上的 GPT-Image。**
 
-自己填供应商信息，对话式生成图片，可选参考图，所有产出都摊在一张可平移、可缩放的画布上。
+自己填供应商信息，输入提示词生成图片，可选参考图，所有产出都摊在一张可平移、可缩放的画布上。
 支持文生图、图生图、批量出图与动图 GIF。
+
+开箱即用 GPT-Image，也能接任何 OpenAI 兼容端点。
 
 没有安装步骤，没有构建步骤，不依赖任何框架。**运行时零依赖** —— 有 Node.js 和浏览器就能跑。
 
-English · [中文](README.zh-CN.md) ｜ 当前为中文版，英文版见 [README.md](README.md)
+[English](README.md) ｜ 中文
 
 ---
 
@@ -29,8 +31,8 @@ English · [中文](README.zh-CN.md) ｜ 当前为中文版，英文版见 [READ
 ## 快速开始
 
 ```bash
-git clone <你的仓库地址>
-cd ai-canvas
+git clone https://github.com/caviarz/imagium.git
+cd imagium
 node server.js
 ```
 
@@ -147,7 +149,7 @@ Windows 上也可以直接双击 `start.bat`。
 |---|---|
 | API Key、Base URL、模型名 | `localStorage`（`aic.provider.v1`） |
 | 卡片元数据（位置、尺寸、提示词） | `localStorage`（`aic.cards.v1`） |
-| 图片字节 | IndexedDB 数据库 `ai-canvas` |
+| 图片字节 | IndexedDB 数据库 `ai-canvas`（沿用项目旧名，这样已有图片不会丢） |
 | 对话历史、界面状态、视口 | `localStorage` |
 
 图片**先**写入 IndexedDB，**再**写引用它的元数据，所以刷新绝不会出现元数据指向丢失的字节。
@@ -173,7 +175,7 @@ IndexedDB 失败时回退到内联 data URL，并在空间紧张时给出提示�
 ### 目录结构
 
 ```
-ai-canvas/
+imagium/
 ├─ server.js            # 零依赖 Node 服务端（静态托管 + API 代理）
 ├─ start.bat            # Windows 一键启动
 ├─ public/

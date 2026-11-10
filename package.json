@@ -1,7 +1,8 @@
 {
-  "name": "ai-canvas",
+  "name": "imagium",
   "version": "1.0.0",
-  "description": "OpenAI-compatible image generation workbench on an infinite canvas. Zero runtime dependencies.",
+  "description": "GPT-Image on an infinite canvas. OpenAI-compatible image generation with text-to-image, image-to-image and animated GIF support. Zero runtime dependencies.",
+  "private": true,
   "keywords": [
     "ai",
     "image-generation",

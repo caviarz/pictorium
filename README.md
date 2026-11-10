@@ -1,10 +1,12 @@
-# AI Canvas
+# Imagium
 
-**An OpenAI-compatible image generation workbench on an infinite canvas.**
+**GPT-Image on an infinite canvas.**
 
-Fill in your own provider details, generate images by chatting, optionally pass reference images —
-and keep everything organized on a pannable, zoomable canvas. Supports text-to-image, image-to-image,
-batch generation, and animated GIFs.
+A local workbench where you bring your own OpenAI-compatible provider, generate images by
+typing a prompt, optionally pass reference images — and keep every result organized on a
+pannable, zoomable canvas. Text-to-image, image-to-image, batch generation, and animated GIFs.
+
+Works with GPT-Image out of the box, and with any OpenAI-compatible endpoint you point it at.
 
 No install step, no build step, no framework. **Zero runtime dependencies** — just Node.js and a browser.
 
@@ -31,8 +33,8 @@ English ｜ [中文](README.zh-CN.md)
 ## Quick start
 
 ```bash
-git clone <your-repo-url>
-cd ai-canvas
+git clone https://github.com/caviarz/imagium.git
+cd imagium
 node server.js
 ```
 
@@ -151,7 +153,7 @@ Nothing leaves your machine except requests to the provider you configure.
 |---|---|
 | API key, base URL, model names | `localStorage` (`aic.provider.v1`) |
 | Card metadata (position, size, prompt) | `localStorage` (`aic.cards.v1`) |
-| Image bytes | IndexedDB database `ai-canvas` |
+| Image bytes | IndexedDB database `ai-canvas` (kept from the project's earlier name so existing images aren't lost) |
 | Chat history, UI state, viewport | `localStorage` |
 
 Images are written to IndexedDB **before** the metadata that references them, so a refresh can never
@@ -182,7 +184,7 @@ and normalizes the many response shapes providers return.
 ### Project layout
 
 ```
-ai-canvas/
+imagium/
 ├─ server.js            # Zero-dependency Node server (static hosting + API proxy)
 ├─ start.bat            # One-click launcher for Windows
 ├─ public/
