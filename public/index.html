@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2" />
+<title>AI Canvas · 画布</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%236d6cff'/%3E%3Cpath d='M9 22l7-13 7 13' stroke='white' stroke-width='2.4' fill='none' stroke-linejoin='round'/%3E%3C/svg%3E" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body class="boot">
+
+<!-- ================= 画布层 ================= -->
+<div id="viewport" class="viewport">
+  <div id="world" class="world">
+    <div class="grid-overlay" id="gridOverlay"></div>
+    <div id="nodeLayer" class="node-layer"></div>
+    <div id="marquee" class="marquee" hidden></div>
+  </div>
+</div>
+
+<div class="zoom-hud">
+  <button class="hud-btn" id="btnZoomOut" title="缩小 (Ctrl+-)">−</button>
+  <button class="hud-btn zoom-val" id="btnZoomReset" title="重置视图 (Ctrl+0)">100%</button>
+  <button class="hud-btn" id="btnZoomIn" title="放大 (Ctrl+=)">+</button>
+  <span class="hud-sep"></span>
+  <button class="hud-btn" id="btnFit" title="适应全部内容 (F)">适应</button>
+  <button class="hud-btn" id="btnReset" title="回到原点">重置</button>
+</div>
+
+<div class="empty-state" id="emptyState">
+  <div class="empty-inner">
+    <div class="empty-mark">▧</div>
+    <h1>在画布上开始创作</h1>
+    <p>右侧设定供应商，写一段提示词。<strong>可拖入参考图</strong>做图生图，<br/>生成的每个结果都会落在画布上，随手拖动、缩放、继续编辑。</p>
+    <div class="empty-tips">
+      <span><kbd>空格</kbd>+拖拽 平移</span>
+      <span><kbd>滚轮</kbd> 缩放</span>
+      <span><kbd>Ctrl</kbd>+<kbd>V</kbd> 粘贴图片</span>
+      <span><kbd>Delete</kbd> 删除选中</span>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 右侧面板 ================= -->
+<aside class="panel" id="panel">
+  <header class="panel-head">
+    <div class="brand">
+      <span class="brand-dot"></span>
+      <span class="brand-name">AI Canvas</span>
+      <span class="brand-tag" id="modeTag">图片生成</span>
+    </div>
+    <div class="head-actions">
+      <button class="icon-btn" id="btnSettings" title="供应商设置">⚙</button>
+      <button class="icon-btn" id="btnHelp" title="快捷键与说明">?</button>
+    </div>
+  </header>
+
+  <div class="tabs" role="tablist">
+    <button class="tab active" data-tab="image">图片生成</button>
+    <button class="tab" data-tab="chat">对话</button>
+  </div>
+
+  <!-- 供应商状态条 -->
+  <div class="provider-bar" id="providerBar">
+    <div class="pb-main">
+      <span class="pb-dot" id="pbDot"></span>
+      <div class="pb-text">
+        <div class="pb-name" id="pbName">未配置供应商</div>
+        <div class="pb-model" id="pbModel">点击右上角 ⚙ 进行设置</div>
+      </div>
+    </div>
+    <button class="pb-btn" id="pbTest">测试</button>
+  </div>
+
+  <!-- 中部可滚动区 -->
+  <div class="panel-scroll" id="panelScroll">
+  <!-- 参考图槽位 -->
+  <section class="section" id="refSection">
+    <div class="section-head">
+      <span class="section-title">参考图 <span class="opt">可选</span></span>
+      <div class="section-tools">
+        <button class="mini-btn" id="btnAddRef" title="添加图片文件">+ 上传</button>
+        <button class="mini-btn" id="btnClearRefs" title="移除全部参考图">清空</button>
+      </div>
+    </div>
+    <div class="ref-strip" id="refStrip">
+      <div class="ref-drop" id="refDrop" tabindex="0">
+        <span class="ref-drop-icon">＋</span>
+        <span class="ref-drop-text">拖入 / 点击 / 从画布选</span>
+      </div>
+    </div>
+    <div class="ref-hint" id="refHint">带参考图时会走「图生图 / 编辑」；提示词里可写“保持人物不变，改成…”</div>
+  </section>
+
+  <!-- 图片参数 -->
+  <section class="section" id="paramsSection">
+    <div class="param-grid">
+      <label class="field">
+        <span class="field-label">尺寸</span>
+        <select id="pSize" class="select">
+          <option value="auto">auto（可出动图）</option>
+          <option value="1024x1024" selected>1024 × 1024 方形</option>
+          <option value="1536x1024">1536 × 1024 横向</option>
+          <option value="1024x1536">1024 × 1536 竖向</option>
+          <option value="512x512">512 × 512 小图</option>
+        </select>
+        <span class="field-hint" id="sizeHint"></span>
+      </label>
+      <label class="field" style="grid-column:1/-1;flex-direction:row;align-items:center;gap:8px;font-size:12px;color:var(--text-2);">
+        <input type="checkbox" id="animAutoSize" checked />
+        <span>要动图时自动用 auto 尺寸（固定尺寸会退回静态 PNG）</span>
+      </label>
+      <label class="field">
+        <span class="field-label">质量</span>
+        <select id="pQuality" class="select">
+          <option value="auto">auto</option>
+          <option value="low">low 快</option>
+          <option value="medium">medium</option>
+          <option value="high">high 精</option>
+        </select>
+      </label>
+      <label class="field">
+        <span class="field-label">格式</span>
+        <select id="pFormat" class="select">
+          <option value="png">PNG</option>
+          <option value="jpeg">JPEG</option>
+          <option value="webp">WEBP</option>
+          <option value="keep">原样返回</option>
+        </select>
+      </label>
+      <label class="field">
+        <span class="field-label">张数</span>
+        <select id="pCount" class="select">
+          <option value="1">1 张</option>
+          <option value="2">2 张</option>
+          <option value="3">3 张</option>
+          <option value="4">4 张</option>
+        </select>
+      </label>
+    </div>
+    <label class="check">
+      <input type="checkbox" id="pKeepRatio" checked />
+      <span>按参考图比例出图（自动改尺寸）</span>
+    </label>
+  </section>
+
+  <!-- 对话参数 -->
+  <section class="section" id="chatParams" hidden>
+    <div class="param-grid two">
+      <label class="field">
+        <span class="field-label">温度 <em id="tempVal">0.7</em></span>
+        <input type="range" id="cTemp" min="0" max="2" step="0.1" value="0.7" class="range" />
+      </label>
+      <label class="field">
+        <span class="field-label">最大输出 tokens</span>
+        <input type="number" id="cMaxTokens" class="input" placeholder="留空=模型默认" min="1" />
+      </label>
+    </div>
+  </section>
+
+  <!-- 对话消息流 -->
+  <section class="chat-log" id="chatLog" hidden>
+    <div class="chat-empty" id="chatEmpty">对话会保存在本机。可以问“帮我优化这条提示词”。</div>
+  </section>
+  </div><!-- /panel-scroll -->
+
+  <!-- 输入区 -->
+  <footer class="composer">
+    <div class="composer-box" id="composerBox">
+      <textarea id="prompt" class="prompt" rows="3" placeholder="描述你想生成的画面…（Enter 发送 / Shift+Enter 换行）"></textarea>
+      <div class="composer-bottom">
+        <div class="composer-left">
+          <button class="chip" id="btnRewrite" title="让模型把当前提示词扩写成更完整的版本">✦ 扩写提示词</button>
+        </div>
+        <div class="composer-right">
+          <span class="cost-hint" id="costHint"></span>
+          <button class="send-btn" id="btnSend" title="生成 (Ctrl+Enter)">
+            <span id="sendLabel">生成</span>
+            <span class="send-spinner" id="sendSpinner" hidden></span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="composer-foot">
+      <span id="statusLine">就绪</span>
+      <button class="link-btn" id="btnStop" hidden>停止</button>
+    </div>
+  </footer>
+</aside>
+
+<!-- ================= 供应商设置抽屉 ================= -->
+<div class="drawer" id="drawer" hidden>
+  <div class="drawer-mask" id="drawerMask"></div>
+  <div class="drawer-body">
+    <div class="drawer-head">
+      <h2>供应商设置</h2>
+      <button class="icon-btn" id="btnDrawerClose">✕</button>
+    </div>
+
+    <div class="drawer-scroll">
+      <div class="preset-row" id="presetRow">
+        <button class="preset" data-preset="openai">OpenAI 官方</button>
+        <button class="preset" data-preset="compatible">通用兼容</button>
+        <button class="preset" data-preset="local">本地 Ollama</button>
+      </div>
+
+      <label class="field block">
+        <span class="field-label">Base URL</span>
+        <input class="input" id="cfgBaseUrl" placeholder="https://api.openai.com/v1" spellcheck="false" />
+        <span class="field-note">填到 <code>/v1</code> 即可；不带 /v1 也能自动补。程序会自动拼 <code>/models</code>、<code>/chat/completions</code>、<code>/images/generations</code>、<code>/images/edits</code>。</span>
+      </label>
+
+      <label class="field block">
+        <span class="field-label">API Key</span>
+        <div class="key-row">
+          <input class="input" id="cfgApiKey" type="password" placeholder="sk-..." spellcheck="false" autocomplete="off" />
+          <button class="mini-btn" id="btnToggleKey">显示</button>
+        </div>
+        <span class="field-note">仅保存在本机 localStorage，请求经本地服务端转发，不进任何日志。</span>
+      </label>
+
+      <label class="field block">
+        <span class="field-label">鉴权方式</span>
+        <select class="select" id="cfgAuthStyle">
+          <option value="bearer">Authorization: Bearer &lt;key&gt;</option>
+          <option value="x-api-key">x-api-key: &lt;key&gt;</option>
+          <option value="both">两者都发</option>
+          <option value="none">不带鉴权</option>
+        </select>
+      </label>
+
+      <div class="field block">
+        <span class="field-label">图片模型（当前）</span>
+        <div class="model-row">
+          <input class="input" id="cfgImageModel" list="modelList" placeholder="gpt-image-1" spellcheck="false" />
+          <button class="mini-btn" id="btnFetchModels">拉取列表</button>
+        </div>
+        <div class="model-picker" id="modelPicker"></div>
+        <span class="field-note">可从下方列表点击选择；也可以手输任意模型名。</span>
+      </div>
+
+      <label class="field block">
+        <span class="field-label">对话模型（可选，不填则用图片模型）</span>
+        <input class="input" id="cfgChatModel" list="modelList" placeholder="gpt-4o-mini / deepseek-chat …" spellcheck="false" />
+      </label>
+
+      <div class="field block">
+        <span class="field-label">附加请求头（可选，JSON）</span>
+        <textarea class="input code" id="cfgHeaders" rows="3" placeholder='{"X-Org-Id": "abc"}' spellcheck="false"></textarea>
+      </div>
+
+      <div class="cfg-actions">
+        <button class="btn primary" id="btnCfgTest">测试连通性</button>
+        <button class="btn" id="btnCfgSave">保存</button>
+      </div>
+      <div class="cfg-result" id="cfgResult"></div>
+
+      <details class="cfg-advanced">
+        <summary>数据与隐私</summary>
+        <p>供应商信息存在浏览器。所有 API 请求由本地 <code>server.js</code> 中转（为了绕过 CORS），服务端只负责转发，不写盘、不落日志。</p>
+        <button class="btn danger" id="btnClearAll">清空全部本地数据（供应商 + 画布 + 对话）</button>
+      </details>
+    </div>
+  </div>
+</div>
+
+<!-- ================= 浮层菜单 ================= -->
+<div class="ctx-menu" id="ctxMenu" hidden></div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<div class="help-modal" id="helpModal" hidden>
+  <div class="help-card">
+    <h3>操作速查</h3>
+    <table>
+      <tr><td><kbd>空格</kbd> / 中键拖拽 / 空白处拖拽</td><td>平移画布</td></tr>
+      <tr><td><kbd>滚轮</kbd></td><td>以光标为中心缩放</td></tr>
+      <tr><td><kbd>Ctrl</kbd> <kbd>=</kbd> / <kbd>-</kbd> / <kbd>0</kbd></td><td>放大 / 缩小 / 复位</td></tr>
+      <tr><td><kbd>F</kbd></td><td>适应全部内容</td></tr>
+      <tr><td>拖拽卡片</td><td>移动图片 / 拖动四角缩放手柄</td></tr>
+      <tr><td><kbd>Ctrl</kbd>+<kbd>V</kbd> / 拖入文件</td><td>作为参考图，或直接落图到画布</td></tr>
+      <tr><td>双击卡片</td><td>把该图设为参考图</td></tr>
+      <tr><td><kbd>Delete</kbd></td><td>删除选中卡片</td></tr>
+      <tr><td><kbd>Enter</kbd> / <kbd>Shift</kbd>+<kbd>Enter</kbd></td><td>发送 / 换行</td></tr>
+    </table>
+    <button class="btn primary" id="btnHelpClose">知道了</button>
+  </div>
+</div>
+
+<datalist id="modelList"></datalist>
+
+<script src="imagestore.js"></script>
+<script src="animutil.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

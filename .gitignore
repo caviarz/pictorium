@@ -1,0 +1,23 @@
+# 依赖
+node_modules/
+.npmcache/
+
+# 测试产物
+shots/
+*.log
+
+# 环境变量与密钥（务必不要提交）
+.env
+.env.*
+!.env.example
+
+# 编辑器 / 系统
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 运行时缓存
+*.tmp
+.cache/

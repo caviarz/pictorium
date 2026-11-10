@@ -1,0 +1,35 @@
+{
+  "name": "ai-canvas",
+  "version": "1.0.0",
+  "description": "OpenAI-compatible image generation workbench on an infinite canvas. Zero runtime dependencies.",
+  "keywords": [
+    "ai",
+    "image-generation",
+    "canvas",
+    "openai",
+    "gpt-image",
+    "text-to-image",
+    "image-to-image",
+    "animated-gif",
+    "self-hosted"
+  ],
+  "license": "MIT",
+  "type": "commonjs",
+  "main": "server.js",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test-ux.js && node run-regression.js && node test-robustness.js",
+    "test:ux": "node test-ux.js",
+    "test:regression": "node run-regression.js",
+    "test:robustness": "node test-robustness.js",
+    "test:animated": "node test-animated.js",
+    "test:api": "node verify.js"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.65.0"
+  },
+  "dependencies": {}
+}
