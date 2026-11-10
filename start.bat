@@ -1,10 +1,10 @@
 @echo off
 setlocal
-title Imagium
+title Pictorium
 cd /d "%~dp0"
 
 echo.
-echo   Imagium
+echo   Pictorium
 echo   ----------------------------------------
 echo.
 

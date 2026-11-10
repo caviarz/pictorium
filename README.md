@@ -1,10 +1,13 @@
-# Imagium
+# Pictorium
 
-**GPT-Image on an infinite canvas.**
+**GPT-Image on an infinite canvas** — a self-hosted AI image generation workbench.
 
-A local workbench where you bring your own OpenAI-compatible provider, generate images by
-typing a prompt, optionally pass reference images — and keep every result organized on a
-pannable, zoomable canvas. Text-to-image, image-to-image, batch generation, and animated GIFs.
+Bring your own OpenAI-compatible provider, generate images with GPT-Image (or any compatible
+model) by typing a prompt, optionally attach reference images, and keep every result organized
+on a pannable, zoomable canvas. Text-to-image, image-to-image, batch generation and animated GIFs.
+
+> **Keywords:** GPT-Image · gpt-image-1 · AI image generation · text-to-image · image-to-image ·
+> infinite canvas · image editor · OpenAI-compatible · self-hosted · animated GIF · zero dependencies
 
 Works with GPT-Image out of the box, and with any OpenAI-compatible endpoint you point it at.
 
@@ -16,10 +19,10 @@ English ｜ [中文](README.zh-CN.md)
 
 ## Features
 
-- **Bring your own provider** — any OpenAI-compatible endpoint. Base URL, API key, auth style,
-  model names, and extra headers are all configurable in the UI. Nothing is hardcoded.
+- **Bring your own provider** — any OpenAI-compatible endpoint (GPT-Image, Flux gateways, local
+  Ollama, proxies). Base URL, API key, auth style, model names and extra headers are all set in the UI.
 - **Infinite canvas** — pan, zoom, box-select, drag, resize, multi-select. Everything persists.
-- **Text-to-image & image-to-image** — attach any number of reference images.
+- **Text-to-image & image-to-image** — attach any number of reference images for editing.
 - **Animated GIF support** — detected at the byte level, stored losslessly, playable and pausable,
   downloaded with the correct extension.
 - **Chat mode** — talk to a chat model with streaming responses (including `reasoning_content`).
@@ -33,8 +36,8 @@ English ｜ [中文](README.zh-CN.md)
 ## Quick start
 
 ```bash
-git clone https://github.com/caviarz/imagium.git
-cd imagium
+git clone https://github.com/caviarz/pictorium.git
+cd pictorium
 node server.js
 ```
 
@@ -184,7 +187,7 @@ and normalizes the many response shapes providers return.
 ### Project layout
 
 ```
-imagium/
+pictorium/
 ├─ server.js            # Zero-dependency Node server (static hosting + API proxy)
 ├─ start.bat            # One-click launcher for Windows
 ├─ public/

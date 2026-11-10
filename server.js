@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Imagium — 零依赖 Node 服务端
+ * Pictorium — 零依赖 Node 服务端
  *
  * 职责：
  *  1. 托管 public/ 下的静态前端
@@ -26,15 +26,17 @@ const ROOT = path.join(__dirname, 'public');
 const PORT = Number(process.env.PORT || 8787);
 const HOST = process.env.HOST || '127.0.0.1';
 const MAX_BODY = 400 * 1024 * 1024; // 400MB，容纳高清参考图
-// 上传暂存目录。用项目名做前缀便于识别；旧版本留下的 ai-canvas-uploads 启动时顺手清掉。
-const UPLOAD_DIR = path.join(os.tmpdir(), 'imagium-uploads');
-const LEGACY_UPLOAD_DIR = path.join(os.tmpdir(), 'ai-canvas-uploads');
+// 上传暂存目录。用项目名做前缀便于识别；旧版本遗留的目录启动时顺手清掉。
+const UPLOAD_DIR = path.join(os.tmpdir(), 'pictorium-uploads');
+const LEGACY_UPLOAD_DIRS = ['ai-canvas-uploads', 'imagium-uploads'].map((d) => path.join(os.tmpdir(), d));
 const DEFAULT_TIMEOUT = 15 * 60 * 1000; // 生成动图/大图可能很慢
 
 fs.mkdirSync(ROOT, { recursive: true });
 fs.mkdirSync(UPLOAD_DIR, { recursive: true });
-// 清理旧版本（项目曾用名）遗留的临时上传文件
-try { fs.rmSync(LEGACY_UPLOAD_DIR, { recursive: true, force: true }); } catch { /* 可选清理 */ }
+// 清理历史版本（项目曾用名）遗留的临时上传文件
+for (const dir of LEGACY_UPLOAD_DIRS) {
+  try { fs.rmSync(dir, { recursive: true, force: true }); } catch { /* 可选清理 */ }
+}
 
 /* ------------------------------------------------------------------ */
 /* 工具函数                                                            */
@@ -606,7 +608,7 @@ server.timeout = DEFAULT_TIMEOUT;
 
 server.listen(PORT, HOST, () => {
   console.log('');
-  console.log('  \x1b[36m◆ Imagium\x1b[0m  服务已启动');
+  console.log('  \x1b[36m◆ Pictorium\x1b[0m  服务已启动');
   console.log(`  \x1b[2m本地地址\x1b[0m   http://${HOST}:${PORT}`);
   console.log(`  \x1b[2m静态目录\x1b[0m   ${ROOT}`);
   console.log(`  \x1b[2m上传暂存\x1b[0m   ${UPLOAD_DIR}`);

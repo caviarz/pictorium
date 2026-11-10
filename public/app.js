@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Imagium — 前端逻辑
+   Pictorium — 前端逻辑
    ========================================================================== */
 (() => {
 'use strict';
@@ -989,7 +989,7 @@ function filenameFor(c, blob) {
     const m = /^data:image\/([a-z0-9.+-]+)/i.exec(c.src || '');
     if (m) { const v = m[1].toLowerCase(); ext = v === 'jpeg' ? 'jpg' : v; }
   }
-  return `imagium-${stamp}.${ext || 'png'}`;
+  return `pictorium-${stamp}.${ext || 'png'}`;
 }
 
 async function copyCard(c) {

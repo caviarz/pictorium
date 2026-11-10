@@ -1,9 +1,12 @@
-# Imagium
+# Pictorium
 
-**无限画布上的 GPT-Image。**
+**无限画布上的 GPT-Image** —— 自托管的 AI 图片生成工作台。
 
 自己填供应商信息，输入提示词生成图片，可选参考图，所有产出都摊在一张可平移、可缩放的画布上。
 支持文生图、图生图、批量出图与动图 GIF。
+
+> **关键词：** GPT-Image · gpt-image-1 · AI 画图 · 文生图 · 图生图 · 无限画布 ·
+> 图片编辑器 · OpenAI 兼容 · 自托管 · 动图 GIF · 零依赖
 
 开箱即用 GPT-Image，也能接任何 OpenAI 兼容端点。
 
@@ -31,8 +34,8 @@
 ## 快速开始
 
 ```bash
-git clone https://github.com/caviarz/imagium.git
-cd imagium
+git clone https://github.com/caviarz/pictorium.git
+cd pictorium
 node server.js
 ```
 
@@ -175,7 +178,7 @@ IndexedDB 失败时回退到内联 data URL，并在空间紧张时给出提示�
 ### 目录结构
 
 ```
-imagium/
+pictorium/
 ├─ server.js            # 零依赖 Node 服务端（静态托管 + API 代理）
 ├─ start.bat            # Windows 一键启动
 ├─ public/

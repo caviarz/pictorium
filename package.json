@@ -1,7 +1,7 @@
 {
-  "name": "imagium",
+  "name": "pictorium",
   "version": "1.0.0",
-  "description": "GPT-Image on an infinite canvas. OpenAI-compatible image generation with text-to-image, image-to-image and animated GIF support. Zero runtime dependencies.",
+  "description": "Pictorium — GPT-Image on an infinite canvas. OpenAI-compatible image generation workbench with text-to-image, image-to-image and animated GIF support. Zero runtime dependencies.",
   "private": true,
   "keywords": [
     "ai",
